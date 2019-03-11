@@ -9,6 +9,7 @@ class RBTree {
   }
 
   insert(data){
+    this.hightChanged = true;
     let currNode = this.root;
     let parent = null;
     while(currNode){
@@ -28,7 +29,7 @@ class RBTree {
     if(parent){
         if(this.comparator(newNode.data, parent.data) < 0){
           parent.leftChild = newNode;
-        } else if(this.comparator(newNode.data, parent.data) > 0){
+        } else {
           parent.rightChild = newNode;
         }
     } else {
@@ -40,7 +41,40 @@ class RBTree {
   }
 
   insertFixup(node){
-
+      /*While we have not reached the root node
+       and the red-red parent-child relationship exists we continue the loop*/
+      while(node != this.root && node.parent.color === Color.RED){
+          let uncle = node.getUncle();
+          if(uncle && uncle.color === Color.RED){
+              //Uncle is RED
+              node.parent.color = Color.BLACK;
+              uncle.color = Color.BLACK;
+              let grandparent = node.getGrandparent();
+              grandparent.color = Color.RED;
+              node = grandparent;
+          } else {
+              //Uncle is BLACK
+              let grandparent = node.getGrandparent();
+              if(grandparent.leftChild === node.parent
+                   && node === node.parent.rightChild) {
+                  this.rotateLeft(node.parent);
+                  node = node.leftChild;
+              } else if(grandparent.rightChild === node.parent
+                        && node === node.parent.leftChild) {
+                  this.rotateRight(node.parent);
+                  node = node.rightChild;
+              }
+              grandparent.color = Color.RED;
+              node.parent.color = Color.BLACK;
+              if(node === node.parent.leftChild
+                   && node.parent === grandparent.leftChild){
+                  this.rotateRight(grandparent);
+              } else {
+                  this.rotateLeft(grandparent);
+              }
+          }
+      }
+      this.root.color = Color.BLACK;
   }
 
   find(data){
@@ -58,6 +92,7 @@ class RBTree {
   }
 
   remove(data){
+      this.hightChanged = true;
       let nodeToRemove = this.find(data);
       if(!nodeToRemove){
           /*There is no element with such key in the tree*/
@@ -267,6 +302,39 @@ class RBTree {
     }
     return Math.max(this.getHeight(node.leftChild), this.getHeight(node.rightChild)) + 1;
   }
+
+  isEmpty(){
+      return this.size() === 0;
+  }
+
+  getMaxWidth() {
+        if(this.isEmpty()){
+            return 0;
+        }
+        let height = this.getMaxHeight();
+        let maxWidth = 0;
+        for (let level = 0; level <= height; level++) {
+            let currentWidth = this.getWidth(this.root, level);
+            if(currentWidth > maxWidth){
+                maxWidth = currentWidth;
+            }
+        }
+        return maxWidth;
+    }
+
+    getWidth(root, level){
+        if(root == null){
+            return 0;
+        }
+        if(level == 1){
+            return 1;
+        } else if(level > 1){
+            return this.getWidth(root.leftChild, level - 1)
+                    + this.getWidth(root.rightChild, level - 1);
+        } else {
+            return 0;
+        }
+    }
 
   size(){
     return this.countNodes(this.root);

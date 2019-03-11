@@ -5,12 +5,12 @@ class Node{
       this.leftChild = null;
       this.rightChild = null;
       this.parent = null;
-      this.color = Math.random(1) < 0.5 ? Color.BLACK : Color.RED;
+      this.color = color;
       this.data = data;
       this.highlighted = false;
   }
 
-  sibling(){
+  getSibling(){
     if(!this.parent){
       return null;
     }
@@ -19,12 +19,12 @@ class Node{
            : this.parent.rightChild;
   }
 
-  grandparent(){
+  getGrandparent(){
     return this.parent ? this.parent.parent : null;
   }
 
-  uncle(){
-    let grandparent = this.grandparent();
+  getUncle(){
+    let grandparent = this.getGrandparent();
     if(!grandparent){
         return null;
     }
@@ -32,5 +32,5 @@ class Node{
            ? grandparent.rightChild
            : grandparent.leftChild;
   }
- 
+
 }

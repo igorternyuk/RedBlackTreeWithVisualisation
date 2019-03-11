@@ -13,15 +13,13 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight);
     frameRate(10);
     tree = new RBTree();
-    tree.insert(1);
-    tree.insert(20);
-    tree.insert(50);
-    tree.insert(3);
-    tree.insert(-7);
+    for(let i = 0; i < 25; ++i){
+        tree.insert(floor(Math.random() * 400 + 100));
+    }
 
-    tree.walk(tree.root, (node, level) => {
+    /*tree.walk(tree.root, (node, level) => {
       console.log("node.data = " + node.data + " level = " + level);
-    }, 0);
+  }, 0);*/
 
     createKeyHandlers();
     console.log("keyHandlers = " + keyHandlers);
@@ -79,11 +77,69 @@ function draw() {
   animationTimer += frameTime;
   //console.log("frameTime = " + frameTime);
   updateAnimation(frameTime);
-	background(200);
+  background(200);
+  drawTreeInfo();
   tree.visualize();
   initTime = millis();
 }
 
+function drawTreeInfo(){
+    textAlign(LEFT);
+    fill(0,0,255);
+    let treeInfo = "Node count = " + tree.size() + " MaxHeight = "
+     + tree.getMaxHeight() + " MaxWidth = " + tree.getMaxWidth()
+     + " MaxVal = " + tree.getMax() + " MinVal = " + tree.getMin();
+    text(treeInfo, 0, nodeRadius / 2);
+    drawPreorder();
+    drawInorder();
+    drawPostorder();
+}
+
+function drawPreorder(){
+    let preorder = [];
+    let preorderStr = "Preorder: ";
+    tree.preorderTraversal(tree.root, (node) => {
+      preorder.push(node);
+    });
+    //console.log(inorder);
+    for(let i = 0; i < preorder.length; ++i){
+        preorderStr += preorder[i].data;
+        if(i != preorder.length - 1){
+            preorderStr += " => ";
+        }
+    }
+    text(preorderStr, 0, 3 * nodeRadius / 2);
+}
+function drawInorder(){
+    let inorder = [];
+    let inorderStr = "Inorder: ";
+    tree.inorderTraversal(tree.root, (node) => {
+      inorder.push(node);
+    });
+    //console.log(inorder);
+    for(let i = 0; i < inorder.length; ++i){
+        inorderStr += inorder[i].data;
+        if(i != inorder.length - 1){
+            inorderStr += " => ";
+        }
+    }
+    text(inorderStr, 0, 5 * nodeRadius / 2);
+}
+function drawPostorder(){
+    let postorder = [];
+    let postorderStr = "Postorder: ";
+    tree.postorderTraversal(tree.root, (node) => {
+      postorder.push(node);
+    });
+    //console.log(inorder);
+    for(let i = 0; i < postorder.length; ++i){
+        postorderStr += postorder[i].data;
+        if(i != postorder.length - 1){
+            postorderStr += " => ";
+        }
+    }
+    text(postorderStr, 0, 7 * nodeRadius / 2);
+}
 function updateAnimation(frameTime){
   if(animationTimer >= 1){
     console.log("Animation timer event ...");
