@@ -1,6 +1,6 @@
 var canvasWidth = 800;
 var canvasHeight = 600;
-var nodeRadius = 64;
+var nodeRadius = 32;
 var tree;
 var initTime = 0;
 var animation = [];

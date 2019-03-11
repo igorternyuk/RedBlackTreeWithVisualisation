@@ -1,6 +1,6 @@
 class RBTree {
   constructor(comparator = (a, b) => {
-    return a.data > b.data ? 1 : (a.data < b.data ? -1 : 0);
+    return a > b ? 1 : (a < b ? -1 : 0);
   }){
     this.root = null;
     this.comparator = comparator;
@@ -8,49 +8,99 @@ class RBTree {
     this.hightChanged = true;
   }
 
-  insert(data){
-    this.hightChanged = true;
-    let newNode = new Node(data);
-    if(!this.root){
-        newNode.color = Color.BLACK;
-        this.root = newNode;
-    } else {
-        this.insertNode(this.root, newNode);
-        this.insertFixup(newNode);
-    }
+  find(data){
+      let currNode = this.root;
+      while(currNode){
+          if(this.comparator(data, currNode.data) === 0){
+              return currNode;
+          } else {
+              currNode = this.comparator(data, currNode.data) < 0
+                        ? currNode.leftChild
+                        : currNode.rightChild;
+          }
+      }
+      return null;
   }
 
-  insertNode(startNode, newNode){
-    if(!startNode){
-      return /*newNode*/;
+  remove(data){
+      let nodeToRemove = this.find(data);
+      if(!nodeToRemove){
+          /*There is no element with such key in the tree*/
+          return;
+      }
+      let child = null;
+      if(nodeToRemove.leftChild && nodeToRemove.rightChild){
+          /*The node to remove has two children*/
+          let successor = nodeToRemove.rightChild;
+          /*We find the left most element in the right sub-tree*/
+          while(successor.leftChild){
+              successor = successor.leftChild;
+          }
+          nodeToRemove.data = successor.data;
+          nodeToRemove = successor;
+      } else if(nodeToRemove.leftChild || nodeToRemove.rightChild){
+          /*The node to remove has only one child*/
+          child = nodeToRemove.leftChild
+                  ? nodeToRemove.leftChild
+                  : nodeToRemove.rightChild;
+          child.parent = nodeToRemove.parent;
+      }
+
+      let parent = nodeToRemove.parent;
+      if(parent){
+          if(nodeToRemove === parent.leftChild){
+              parent.leftChild = child;
+          } else {
+              parent.rightChild = child;
+          }
+      } else {
+          this.root = child;
+      }
+      if(nodeToRemove.color === Color.BLACK){
+          this.removeFixup(child);
+      }
+  }
+
+  removeFixup(node){
+
+  }
+
+
+  insert(data){
+    let currNode = this.root;
+    let parent = null;
+    while(currNode){
+        //The element with such key already exists
+        if(this.comparator(data, currNode.data) === 0){
+            return currNode;
+        }
+        parent = currNode;
+        currNode = (this.comparator(data, currNode.data) < 0)
+                  ? currNode.leftChild
+                  : currNode.rightChild;
+
     }
-    if(this.comparator(newNode, startNode) < 0){
-      if(startNode.leftChild){
-        this.insertNode(startNode.leftChild, newNode);
-      } else {
-        startNode.leftChild = newNode;
-        newNode.parent = startNode;
-      }
-      /*startNode.leftChild = this.insertNode(startNode.leftChild, newNode);
-      startNode.leftChild.parent = startNode.leftChild;*/
-    } else if(this.comparator(newNode, startNode) > 0){
-      if(startNode.rightChild){
-        this.insertNode(startNode.rightChild, newNode);
-      } else {
-        startNode.rightChild = newNode;
-        newNode.parent = startNode;
-      }
-      /*startNode.rightChild = this.insertNode(startNode.rightChild, newNode);
-      startNode.rightChild.parent = startNode.rightChild;*/
+    let newNode = new Node(data);
+    newNode.color = Color.RED;
+    newNode.parent = parent;
+    if(parent){
+        if(this.comparator(newNode.data, parent.data) < 0){
+          parent.leftChild = newNode;
+        } else if(this.comparator(newNode.data, parent.data) > 0){
+          parent.rightChild = newNode;
+        }
     } else {
-      startNode.data = newNode.data;
+        newNode.color = Color.BLACK;
+        this.root = newNode;
     }
-    //return startNode;
+    this.insertFixup(newNode);
+    return newNode;
   }
 
   insertFixup(node){
 
   }
+
 
   inorderTraversal(node, visitFunc){
     if(!node){
@@ -128,7 +178,6 @@ class RBTree {
 
     ellipse(currNodeX, currNodeY, nodeRadius, nodeRadius);
     textAlign(CENTER);
-    textSize(30);
     if(root.highlighted){
         fill(0);
     } else {
@@ -203,12 +252,4 @@ class RBTree {
   }
 
 
-
-  remove(data){
-
-  }
-
-  removeFixup(node){
-
-  }
 }

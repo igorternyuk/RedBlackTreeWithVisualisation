@@ -10,6 +10,29 @@ class Node{
       this.highlighted = false;
   }
 
+  sibling(){
+    if(!this.parent){
+      return null;
+    }
+    return this === this.parent.leftChild
+           ? this.parent.leftChild
+           : this.parent.rightChild;
+  }
+
+  grandparent(){
+    return this.parent ? this.parent.parent : null;
+  }
+
+  uncle(){
+    let grandparent = this.grandparent();
+    if(!grandparent){
+        return null;
+    }
+    return this.parent === grandparent.leftChild
+           ? grandparent.rightChild
+           : grandparent.leftChild;
+  }
+
   rotateLeft(){
 
   }
@@ -18,5 +41,3 @@ class Node{
 
   }
 }
-
-const NILL = new Node(0, Color.BLACK);
