@@ -32,12 +32,5 @@ class Node{
            ? grandparent.rightChild
            : grandparent.leftChild;
   }
-
-  rotateLeft(){
-
-  }
-
-  rotateRight(){
-
-  }
+ 
 }

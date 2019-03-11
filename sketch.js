@@ -13,17 +13,11 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight);
     frameRate(10);
     tree = new RBTree();
-    tree.insert(10);
-    tree.insert(6);
-    tree.insert(13);
-    tree.insert(17);
-    tree.insert(11);
-    tree.insert(8);
-    tree.insert(2);
     tree.insert(1);
-    tree.insert(5);
-    tree.insert(7);
-    tree.insert(9);
+    tree.insert(20);
+    tree.insert(50);
+    tree.insert(3);
+    tree.insert(-7);
 
     tree.walk(tree.root, (node, level) => {
       console.log("node.data = " + node.data + " level = " + level);
@@ -66,6 +60,16 @@ function createKeyHandlers(){
     });
     console.log("animation.size = " + animation.length);
     animationActive = true;
+  };
+
+  keyHandlers['A'] = function() {
+    console.log("Left rotation");
+    tree.rotateLeft(tree.root);
+  };
+
+  keyHandlers['D'] = function() {
+    console.log("Right rotation");
+    tree.rotateRight(tree.root);
   };
 }
 

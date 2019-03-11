@@ -8,6 +8,41 @@ class RBTree {
     this.hightChanged = true;
   }
 
+  insert(data){
+    let currNode = this.root;
+    let parent = null;
+    while(currNode){
+        //The element with such key already exists
+        if(this.comparator(data, currNode.data) === 0){
+            return currNode;
+        }
+        parent = currNode;
+        currNode = (this.comparator(data, currNode.data) < 0)
+                  ? currNode.leftChild
+                  : currNode.rightChild;
+
+    }
+    let newNode = new Node(data);
+    newNode.color = Color.RED;
+    newNode.parent = parent;
+    if(parent){
+        if(this.comparator(newNode.data, parent.data) < 0){
+          parent.leftChild = newNode;
+        } else if(this.comparator(newNode.data, parent.data) > 0){
+          parent.rightChild = newNode;
+        }
+    } else {
+        newNode.color = Color.BLACK;
+        this.root = newNode;
+    }
+    this.insertFixup(newNode);
+    return newNode;
+  }
+
+  insertFixup(node){
+
+  }
+
   find(data){
       let currNode = this.root;
       while(currNode){
@@ -65,43 +100,6 @@ class RBTree {
 
   }
 
-
-  insert(data){
-    let currNode = this.root;
-    let parent = null;
-    while(currNode){
-        //The element with such key already exists
-        if(this.comparator(data, currNode.data) === 0){
-            return currNode;
-        }
-        parent = currNode;
-        currNode = (this.comparator(data, currNode.data) < 0)
-                  ? currNode.leftChild
-                  : currNode.rightChild;
-
-    }
-    let newNode = new Node(data);
-    newNode.color = Color.RED;
-    newNode.parent = parent;
-    if(parent){
-        if(this.comparator(newNode.data, parent.data) < 0){
-          parent.leftChild = newNode;
-        } else if(this.comparator(newNode.data, parent.data) > 0){
-          parent.rightChild = newNode;
-        }
-    } else {
-        newNode.color = Color.BLACK;
-        this.root = newNode;
-    }
-    this.insertFixup(newNode);
-    return newNode;
-  }
-
-  insertFixup(node){
-
-  }
-
-
   inorderTraversal(node, visitFunc){
     if(!node){
       return;
@@ -127,6 +125,60 @@ class RBTree {
     this.postorderTraversal(node.leftChild, visitFunc);
     this.postorderTraversal(node.rightChild, visitFunc);
     visitFunc(node);
+  }
+
+  rotateLeft(node){
+     let pivot = node.rightChild;
+
+     if(pivot){
+        pivot.parent = node.parent;
+     }
+     if(node.parent){
+         if(node === node.parent.leftChild){
+             node.parent.leftChild = pivot;
+         } else {
+             node.parent.rightChild = pivot;
+         }
+     } else {
+         this.root = pivot;
+     }
+
+     if(pivot){
+         node.rightChild = pivot.leftChild;
+         if(pivot.leftChild){
+             pivot.leftChild.parent = node;
+         }
+         node.parent = pivot;
+         pivot.leftChild = node;
+     }
+     this.hightChanged = true;
+  }
+
+  rotateRight(node){
+      let pivot = node.leftChild;
+
+      if(pivot){
+         pivot.parent = node.parent;
+      }
+      if(node.parent){
+          if(node === node.parent.leftChild){
+              node.parent.leftChild = pivot;
+          } else {
+              node.parent.rightChild = pivot;
+          }
+      } else {
+          this.root = pivot;
+      }
+
+      if(pivot){
+          node.leftChild = pivot.rightChild;
+          if(pivot.rightChild){
+              pivot.rightChild.parent = node;
+          }
+          node.parent = pivot;
+          pivot.rightChild = node;
+      }
+      this.hightChanged = true;
   }
 
   visualize(){
@@ -250,6 +302,4 @@ class RBTree {
       return null;
     }
   }
-
-
 }
