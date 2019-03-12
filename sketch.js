@@ -13,7 +13,7 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight);
     frameRate(10);
     tree = new RBTree();
-    for(let i = 0; i < 25; ++i){
+    for(let i = 0; i < 30; ++i){
         tree.insert(floor(Math.random() * 400 + 100));
     }
 
@@ -90,9 +90,9 @@ function drawTreeInfo(){
      + tree.getMaxHeight() + " MaxWidth = " + tree.getMaxWidth()
      + " MaxVal = " + tree.getMax() + " MinVal = " + tree.getMin();
     text(treeInfo, 0, nodeRadius / 2);
-    drawPreorder();
+    /*drawPreorder();
     drawInorder();
-    drawPostorder();
+    drawPostorder();*/
 }
 
 function drawPreorder(){
@@ -142,7 +142,6 @@ function drawPostorder(){
 }
 function updateAnimation(frameTime){
   if(animationTimer >= 1){
-    console.log("Animation timer event ...");
     animationTimer = 0;
     if(animationActive){
       if(highlightedIndex >= animation.length - 1){
@@ -156,7 +155,6 @@ function updateAnimation(frameTime){
         if(highlightedIndex >= 0){
             animation[highlightedIndex].highlighted = false;
         }
-        console.log("highlightedIndex = " + highlightedIndex);
         ++highlightedIndex;
         animation[highlightedIndex].highlighted = true;
       }

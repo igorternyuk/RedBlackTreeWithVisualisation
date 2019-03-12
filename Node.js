@@ -14,9 +14,10 @@ class Node{
     if(!this.parent){
       return null;
     }
-    return this === this.parent.leftChild
-           ? this.parent.leftChild
-           : this.parent.rightChild;
+    let s = this === this.parent.leftChild
+           ? this.parent.rightChild
+           : this.parent.leftChild;
+   return s;
   }
 
   getGrandparent(){
@@ -32,5 +33,8 @@ class Node{
            ? grandparent.rightChild
            : grandparent.leftChild;
   }
-
 }
+
+const NILL = new Node(0, Color.BLACK);
+NILL.leftChild = NILL;
+NILL.rightChild = NILL;
