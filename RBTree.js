@@ -240,6 +240,31 @@ class RBTree {
     this.inorderTraversal(node.rightChild, visitFunc);
   }
 
+  flip(){
+      this.flipSubtree(this.root);
+  }
+
+  flipSubtree(root){
+      if(!root || root === NILL){
+          return;
+      }
+      let tmp = root.rightChild;
+      root.rightChild = root.leftChild;
+      root.leftChild = tmp;
+      this.flipSubtree(root.leftChild);
+      this.flipSubtree(root.rightChild);
+
+  }
+
+  reversedInorderTraversal(node, visitFunc){
+      if(!node || node === NILL){
+        return;
+      }
+      this.inorderTraversal(node.rightChild, visitFunc);
+      visitFunc(node);
+      this.inorderTraversal(node.leftChild, visitFunc);
+  }
+
   preorderTraversal(node, visitFunc){
     if(!node || node === NILL){
       return;
@@ -375,6 +400,31 @@ class RBTree {
     this.walk(rootNode.leftChild, walkFunc, level + 1);
     walkFunc(rootNode, level);
     this.walk(rootNode.rightChild, walkFunc, level + 1);
+  }
+
+  reversedWalk(rootNode, walkFunc, level){
+    if(!rootNode || rootNode === NILL){
+      return;
+    }
+    this.reversedWalk(rootNode.rightChild, walkFunc, level + 1);
+    walkFunc(rootNode, level);
+    this.reversedWalk(rootNode.leftChild, walkFunc, level + 1);
+  }
+
+  printData(node, level){
+      if(!node || node === NILL){
+          return;
+      }
+      let spacing = "";
+      for(let i = 0; i < level; ++i){
+          spacing += "    ";
+      }
+      let color = node.color === Color.RED ? "R" : "B";
+      console.log(spacing + color + node.data);
+  }
+
+  print(){
+      this.reversedWalk(this.root, this.printData, 0);
   }
 
   getMaxHeight(){

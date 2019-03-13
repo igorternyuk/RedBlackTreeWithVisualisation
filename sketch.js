@@ -13,7 +13,7 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight);
     frameRate(10);
     tree = new RBTree();
-    for(let i = 1; i <= 40; ++i){
+    for(let i = 1; i <= 7; ++i){
         tree.insert(floor(Math.random() * 799 + 100));
     }
 
