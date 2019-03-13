@@ -13,13 +13,9 @@ function setup() {
     createCanvas(canvasWidth, canvasHeight);
     frameRate(10);
     tree = new RBTree();
-    for(let i = 0; i < 30; ++i){
-        tree.insert(floor(Math.random() * 400 + 100));
+    for(let i = 1; i <= 40; ++i){
+        tree.insert(floor(Math.random() * 799 + 100));
     }
-
-    /*tree.walk(tree.root, (node, level) => {
-      console.log("node.data = " + node.data + " level = " + level);
-  }, 0);*/
 
     createKeyHandlers();
     console.log("keyHandlers = " + keyHandlers);
@@ -27,6 +23,18 @@ function setup() {
     console.log("tree.getMax() = " +  tree.getMax());
     console.log("tree.getMin() = " +  tree.getMin());
     console.log("tree.size() = " +  tree.size());
+}
+
+//main loop
+function draw() {
+  var frameTime = (millis() - initTime) / 1000;
+  animationTimer += frameTime;
+  //console.log("frameTime = " + frameTime);
+  updateAnimation(frameTime);
+  background(200);
+  drawTreeInfo();
+  tree.visualize();
+  initTime = millis();
 }
 
 function createKeyHandlers(){
@@ -71,28 +79,16 @@ function createKeyHandlers(){
   };
 }
 
-//main loop
-function draw() {
-  var frameTime = (millis() - initTime) / 1000;
-  animationTimer += frameTime;
-  //console.log("frameTime = " + frameTime);
-  updateAnimation(frameTime);
-  background(200);
-  drawTreeInfo();
-  tree.visualize();
-  initTime = millis();
-}
-
 function drawTreeInfo(){
-    textAlign(LEFT);
+    textAlign(CENTER);
     fill(0,0,255);
     let treeInfo = "Node count = " + tree.size() + " MaxHeight = "
      + tree.getMaxHeight() + " MaxWidth = " + tree.getMaxWidth()
      + " MaxVal = " + tree.getMax() + " MinVal = " + tree.getMin();
-    text(treeInfo, 0, nodeRadius / 2);
-    /*drawPreorder();
-    drawInorder();
-    drawPostorder();*/
+    text(treeInfo, canvasWidth / 2, nodeRadius / 2);
+    //drawPreorder();
+    //drawInorder();
+    //drawPostorder();
 }
 
 function drawPreorder(){
@@ -116,7 +112,6 @@ function drawInorder(){
     tree.inorderTraversal(tree.root, (node) => {
       inorder.push(node);
     });
-    //console.log(inorder);
     for(let i = 0; i < inorder.length; ++i){
         inorderStr += inorder[i].data;
         if(i != inorder.length - 1){
@@ -131,7 +126,6 @@ function drawPostorder(){
     tree.postorderTraversal(tree.root, (node) => {
       postorder.push(node);
     });
-    //console.log(inorder);
     for(let i = 0; i < postorder.length; ++i){
         postorderStr += postorder[i].data;
         if(i != postorder.length - 1){
@@ -140,6 +134,7 @@ function drawPostorder(){
     }
     text(postorderStr, 0, 7 * nodeRadius / 2);
 }
+
 function updateAnimation(frameTime){
   if(animationTimer >= 1){
     animationTimer = 0;
@@ -169,4 +164,22 @@ function keyReleased(){
   } else {
     console.log("Handler not found");
   }
+}
+
+function test(){
+    for(let i = 1; i <= 200; ++i){
+        console.log("***INSERTED => " + i);
+        tree.insert(i);
+    }
+    for(let i = 1; i <= 200; ++i){
+        let h1 = tree.size();
+        tree.remove(i);
+        console.log("***REMOVED => " + i);
+        let h2 = tree.size();
+        if(h1 - h2 > 1){
+            console.log("BUG!!! => deltaSize =" + (h1 - h2));
+        } else {
+            console.log("GOOD!!! => deltaSize =" + (h1 - h2));
+        }
+    }
 }

@@ -8,7 +8,7 @@ class RBTree {
     this.hightChanged = true;
   }
 
-  insert(data){
+ insert(data){
     this.hightChanged = true;
     let currNode = this.root;
     let parent = null;
@@ -41,11 +41,11 @@ class RBTree {
     }
     this.insertFixup(newNode);
     return newNode;
-  }
+}
 
   insertFixup(node){
-      /*While we have not reached the root node
-       and the red-red parent-child relationship exists we continue the loop*/
+      //While we have not reached the root node
+      //and the red-red parent-child relationship exists we continue the loop
       while(node != this.root && node.parent.color === Color.RED){
           let uncle = node.getUncle();
           if(uncle && uncle.color === Color.RED){
@@ -96,21 +96,20 @@ class RBTree {
 
   remove(data){
       this.hightChanged = true;
+      NILL.color = Color.BLACK;
       let nodeToRemove = this.find(data);
       if(!nodeToRemove || nodeToRemove === NILL){
-          /*There is no element with such key in the tree*/
+          //There is no element with such key in the tree
           return;
       }
       let child = null;
       if(nodeToRemove.leftChild !== NILL && nodeToRemove.rightChild !== NILL){
-          /*The node to remove has two children*/
-          console.log("Node to remove has two children");
+          //The node to remove has two children
           let successor = nodeToRemove.rightChild;
-          /*We find the left most element in the right sub-tree*/
+          //We find the left most element in the right sub-tree
           while(successor.leftChild !== NILL){
               successor = successor.leftChild;
           }
-          console.log("successor was found");
           nodeToRemove.data = successor.data;
           nodeToRemove = successor;
       }
@@ -124,33 +123,32 @@ class RBTree {
       if(parent){
           if(nodeToRemove === parent.leftChild){
               parent.leftChild = child;
-              console.log("parent.leftChild = child;");
           } else {
               parent.rightChild = child;
-              console.log("parent.rightChild = child;");
           }
-          console.log("Node was removed from chain");
           child.parent = parent;
-          console.log("child.parent.data = " + child.parent.data);
       } else {
           this.root = child;
-          console.log("New root");
       }
 
       if(nodeToRemove.color === Color.BLACK){
-          if(child.color === Color.RED){
+          console.log("/////nodeToRemove.color === Color.BLACK/////")
+          if(child !== NILL && child.color === Color.RED){
+              console.log("No fixup needed. Just recoloring.")
               child.color = Color.BLACK;
           } else {
+              console.log("Fixup is necessary");
               this.removeFixup(child);
           }
       }
+      console.log("Tree size = " + this.size());
   }
 
   removeFixup(node){
-      console.log("RemoveFixup was called");
       if(node === null){
           console.log("Node is null");
       }
+      console.log("RemoveFixup(" + node.data + ") was called");
       while(node !== this.root && node.color === Color.BLACK){
           let sibling = node.getSibling();
           console.log("nodeData = " + node.data);
@@ -158,7 +156,7 @@ class RBTree {
           console.log("node.parent.data = " + node.parent.data);
           console.log("Remove fixup loop");
           if(sibling.color === Color.RED){
-              console.log("Case 2 -> Sibling color is RED");
+              console.log("Case 1 -> Sibling color is RED");
               sibling.color = Color.BLACK;
               node.parent.color = Color.RED;
               if(node === node.parent.leftChild){
@@ -175,36 +173,28 @@ class RBTree {
               && sibling.rightChild.color === Color.BLACK){
                   console.log("Case 2-3");
                   console.log("Recoloring sibling to RED");
-             /*if(parent.color === Color.BLACK){
-                 //Parent is BLACK
-                 console.log("Case 3 -> All nodes are BLACK");
+             if(sibling !== NILL){
                  sibling.color = Color.RED;
-                 node = node.parent;
-             } else {
-                 //Parent is RED
-                 console.log("Case 4 -> Sibling and its children are BLACK but the parent is RED");
-                 sibling.color = Color.RED;
-                 node.parent.color = Color.BLACK;
-             }*/
-             sibling.color = Color.RED;
-             //node.parent.color = Color.BLACK;
+             }
              node = node.parent;
          } else {
              console.log("Black sibling");
              console.log("Before Case 5");
              if(node === node.parent.leftChild
-                /*&& sibling.leftChild.color === Color.RED*/
                 && sibling.rightChild.color === Color.BLACK){
-                 sibling.color = Color.RED;
-                 sibling.leftChild.color = Color.BLACK;
+                if(sibling !== NILL){
+                    sibling.color = Color.RED;
+                    sibling.leftChild.color = Color.BLACK;
+                }
                  this.rotateRight(sibling);
                  console.log("N is left child of its parent and right child of sibling is red");
                  console.log("rotateRight");
              } else if(node === node.parent.rightChild
-                       && sibling.leftChild.color === Color.BLACK
-                   /*&& sibling.rightChild.color === Color.RED*/){
-                 sibling.color = Color.RED;
-                 sibling.rightChild.color = Color.BLACK;
+                       && sibling.leftChild.color === Color.BLACK){
+                 if(sibling !== NILL){
+                     sibling.color = Color.RED;
+                     sibling.rightChild.color = Color.BLACK;
+                 }
                  this.rotateLeft(sibling);
                  console.log("N is right child of its parent and left child of sibling is red");
                  console.log("rotateLeft");
@@ -236,7 +226,6 @@ class RBTree {
              }
              console.log("After Case 6");
              break;
-             //node = this.root;
          }
       }
       node.color = Color.BLACK;
@@ -275,7 +264,7 @@ class RBTree {
      }
      let pivot = node.rightChild;
 
-     if(pivot){
+     if(pivot && pivot !== NILL){
         pivot.parent = node.parent;
      }
      if(node.parent){
@@ -288,9 +277,9 @@ class RBTree {
          this.root = pivot;
      }
 
-     if(pivot){
+     if(pivot && pivot !== NILL){
          node.rightChild = pivot.leftChild;
-         if(pivot.leftChild){
+         if(pivot.leftChild && pivot.leftChild !== NILL){
              pivot.leftChild.parent = node;
          }
          node.parent = pivot;
@@ -305,7 +294,7 @@ class RBTree {
       }
       let pivot = node.leftChild;
 
-      if(pivot){
+      if(pivot && pivot !== NILL){
          pivot.parent = node.parent;
       }
       if(node.parent){
@@ -318,9 +307,9 @@ class RBTree {
           this.root = pivot;
       }
 
-      if(pivot){
+      if(pivot && pivot !== NILL){
           node.leftChild = pivot.rightChild;
-          if(pivot.rightChild){
+          if(pivot.rightChild && pivot.rightChild !== NILL){
               pivot.rightChild.parent = node;
           }
           node.parent = pivot;
@@ -330,8 +319,7 @@ class RBTree {
   }
 
   visualize(){
-      //draw(this.root, canvasWidth / 2, nodeRadius, 0);
-      this.render(this.root, canvasWidth / 2, nodeRadius, 0);
+      this.render(this.root, canvasWidth / 2, 1.2 * nodeRadius, 0);
   }
 
   render(root, parentX, parentY, level){
@@ -472,5 +460,17 @@ class RBTree {
     } else {
       return null;
     }
+  }
+
+  getBlackHeight(rootNode){
+      let blackHeight = 0;
+      let currNode = rootNode;
+      while(currNode !== NILL){
+          if(currNode.color === Color.BLACK){
+              ++blackHeight;
+          }
+          currNode = currNode.rightChild;
+      }
+      return blackHeight;
   }
 }

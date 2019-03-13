@@ -14,10 +14,9 @@ class Node{
     if(!this.parent){
       return null;
     }
-    let s = this === this.parent.leftChild
+    return this === this.parent.leftChild
            ? this.parent.rightChild
            : this.parent.leftChild;
-   return s;
   }
 
   getGrandparent(){
